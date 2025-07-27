@@ -1,5 +1,6 @@
 package com.codebase.microservices.CitizenService;
 
+import com.codebase.microservices.CitizenService.entity.Citizen;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -11,3 +12,5 @@ public class CitizenServiceApplication {
 	}
 
 }
+
+

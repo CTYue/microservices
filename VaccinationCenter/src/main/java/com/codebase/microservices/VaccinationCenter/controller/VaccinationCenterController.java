@@ -1,11 +1,13 @@
 package com.codebase.microservices.VaccinationCenter.controller;
 
+import com.codebase.microservices.VaccinationCenter.clients.CitizenClient;
 import com.codebase.microservices.VaccinationCenter.entity.VaccinationCenter;
 import com.codebase.microservices.VaccinationCenter.model.Citizen;
 import com.codebase.microservices.VaccinationCenter.model.RequiredResponse;
 import com.codebase.microservices.VaccinationCenter.repository.CenterRepository;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +19,21 @@ import java.util.List;
 @RequestMapping("/vaccinationcenter")
 public class VaccinationCenterController {
 
+    private final CitizenClient citizenClient;
+
     @Autowired
     private CenterRepository centerRepository;
 
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    public VaccinationCenterController(@Qualifier("citizenClient") CitizenClient citizenClient) {
+        this.citizenClient = citizenClient;
+    }
+
     @PostMapping("/add")
-    public ResponseEntity<VaccinationCenter> addCitizen(@RequestBody VaccinationCenter vaccinationCenter) {
+    public ResponseEntity<VaccinationCenter> addCenter(@RequestBody VaccinationCenter vaccinationCenter) {
 
         VaccinationCenter vaccinationCenter1 = centerRepository.save(vaccinationCenter);
         return new ResponseEntity<>(vaccinationCenter, HttpStatus.OK);
@@ -41,8 +50,10 @@ public class VaccinationCenterController {
         response.setCenter(center);
 
         //then get all citizen registered in that center
-        List<Citizen> listCitizen = restTemplate.getForObject("http://CITIZEN-SERVICE/citizen/id/" + id, List.class);
+//        List<Citizen> listCitizen = restTemplate.getForObject("http://CITIZEN-SERVICE/citizen/id/" + id, List.class);
+        List<Citizen> listCitizen = citizenClient.getCitizensById(id);
         response.setCitizens(listCitizen);
+
         return new ResponseEntity<RequiredResponse>(response, HttpStatus.OK);
 
     }
