@@ -16,12 +16,12 @@ public class CitizenController {
     @Autowired
     private CitizenRepository repo;
 
-    @RequestMapping("/test")
+    @GetMapping("/test")
     public ResponseEntity<String> test() {
-        return new ResponseEntity<>("Hello", HttpStatus.OK);
+        return new ResponseEntity<>("Hello! CitizenService is live", HttpStatus.OK);
     }
 
-    @RequestMapping("/id/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<List<Citizen>> getById(@PathVariable Integer id) {
         List<Citizen> listCitizen = repo.findByVaccinationCenterId(id);
         return new ResponseEntity<>(listCitizen, HttpStatus.OK);
